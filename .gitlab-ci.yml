@@ -1,0 +1,61 @@
+stages:
+  - build
+  - release
+
+
+.build:
+  stage: build
+  tags: [docker]
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: ['']
+  script:
+    - >-
+      /kaniko/executor
+      --cache=false
+      --target "${BUILD_TARGET}"
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-${BUILD_TARGET}"
+      --label org.opencontainers.image.created="$(date -u -Iseconds)"
+      --label org.opencontainers.image.revision="$CI_COMMIT_SHA"
+      --label org.opencontainers.image.source="$CI_PROJECT_URL"
+
+build:iperf2:
+  extends: .build
+  variables:
+    BUILD_TARGET: iperf2
+
+build:iperf3:
+  extends: .build
+  variables:
+    BUILD_TARGET: iperf3
+
+
+.release:
+  stage: release
+  tags: [docker]
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: ['']
+  before_script:
+    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+release:iperf2:
+  extends: .release
+  needs: ['build:iperf2']
+  script:
+    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf2 2.2.0
+    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf2 2.2
+    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf2 2
+
+release:iperf3:
+  extends: .release
+  needs: ['build:iperf3']
+  script:
+    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3.17.1
+    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3.17
+    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3
+
+
+# vi: set ts=2 sw=2 et ft=yaml:
