@@ -3,6 +3,9 @@ stages:
   - test
   - release
 
+variables:
+  DOCKER_HUB_REPO: ccoley/iperf
+
 
 
 .build:
@@ -79,6 +82,7 @@ test:iperf3:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   before_script:
     - crane auth login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - crane auth login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_TOKEN" index.docker.io
 
 release:iperf2:
   extends: .release
@@ -86,6 +90,8 @@ release:iperf2:
   script:
     - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf2 2.2
     - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf2 2
+    - crane copy ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf2 ${DOCKER_HUB_REPO}:2.2
+    - crane tag ${DOCKER_HUB_REPO}:2.2 2
 
 release:iperf3:
   extends: .release
@@ -93,5 +99,7 @@ release:iperf3:
   script:
     - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3.17
     - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3
+    - crane copy ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 ${DOCKER_HUB_REPO}:3.17
+    - crane tag ${DOCKER_HUB_REPO}:3.17 3
 
 # vi: set ts=2 sw=2 et ft=yaml:
