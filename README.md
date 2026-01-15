@@ -4,14 +4,14 @@ This repo builds two Docker images meant for use as an iperf server.
 
 ## Tags
 
-There are images available with iPerf 2 or iPerf 3.
+There are images available with iPerf 3 or iPerf 2.
 
-- `3.17`, `3` contain iPerf 3
+- `3.19`, `3` contain iPerf 3
 - `2.2`, `2` contain iPerf 2
 
 ## Usage
 
-The images default to running in server mode on the default port, which is 5001 for iPerf 2 and 5201 for iPerf 3.
+The images default to running in server mode on the default port, which is 5201 for iPerf 3 and 5001 for iPerf 2.
 
 ### Server Mode
 

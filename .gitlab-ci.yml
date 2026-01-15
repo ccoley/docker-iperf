@@ -97,9 +97,9 @@ release:iperf3:
   extends: .release
   needs: ['test:iperf3']
   script:
-    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3.17
+    - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3.19
     - crane tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 3
-    - crane copy ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 ${DOCKER_HUB_REPO}:3.17
-    - crane tag ${DOCKER_HUB_REPO}:3.17 3
+    - crane copy ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}-iperf3 ${DOCKER_HUB_REPO}:3.19
+    - crane tag ${DOCKER_HUB_REPO}:3.19 3
 
 # vi: set ts=2 sw=2 et ft=yaml:
